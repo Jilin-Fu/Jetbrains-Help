@@ -1,9 +1,7 @@
 package com.jetbrains.help.context;
 
 import cn.hutool.core.codec.Base64;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.PemUtil;
 import cn.hutool.crypto.SecureUtil;
@@ -28,14 +26,15 @@ import static cn.hutool.crypto.asymmetric.SignAlgorithm.SHA1withRSA;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LicenseContextHolder {
 
-    public static String generateLicense(String licensesName, String assigneeName, String expiryDate, Set<String> productCodeSet) {
+    public static String generateLicense(String licensesName, String assigneeName, String expiryDate,
+                                         Set<String> productCodeSet) {
         String licenseId = IdUtil.fastSimpleUUID();
         List<Product> products = productCodeSet.stream()
-                .map(productCode -> new Product()
-                        .setCode(productCode)
-                        .setFallbackDate(expiryDate)
-                        .setPaidUpTo(expiryDate))
-                .toList();
+                                               .map(productCode -> new Product()
+                                                       .setCode(productCode)
+                                                       .setFallbackDate(expiryDate)
+                                                       .setPaidUpTo(expiryDate))
+                                               .toList();
         LicensePart licensePart = new LicensePart()
                 .setLicenseId(licenseId)
                 .setLicenseeName(licensesName)
@@ -54,7 +53,7 @@ public class LicenseContextHolder {
         } catch (CertificateEncodingException e) {
             throw new IllegalArgumentException("Certificate extraction failed", e);
         }
-        return CharSequenceUtil.format("{}-{}-{}-{}", licenseId, licensePartBase64, signatureBase64, certBase64);
+        return STR."\{licenseId}-\{licensePartBase64}-\{signatureBase64}-\{certBase64}";
     }
 
     @Data

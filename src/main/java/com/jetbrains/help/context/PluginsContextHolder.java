@@ -43,7 +43,7 @@ public class PluginsContextHolder {
         try {
             pluginJsonArray = IoUtil.readUtf8(FileUtil.getInputStream(pluginsJsonFile));
         } catch (IORuntimeException e) {
-            throw new IllegalArgumentException(CharSequenceUtil.format("{} File read failed", PLUGIN_JSON_FILE_NAME), e);
+            throw new IllegalArgumentException(STR."\{PLUGIN_JSON_FILE_NAME} File read failed", e);
         }
         if (CharSequenceUtil.isBlank(pluginJsonArray) || !JSONUtil.isTypeJSON(pluginJsonArray)) {
             refreshJsonFile();
@@ -77,31 +77,34 @@ public class PluginsContextHolder {
         try {
             FileUtil.writeString(jsonStr, pluginsJsonFile, StandardCharsets.UTF_8);
         } catch (IORuntimeException e) {
-            throw new IllegalArgumentException(CharSequenceUtil.format("{} File write failed", PLUGIN_JSON_FILE_NAME), e);
+            throw new IllegalArgumentException(STR."\{PLUGIN_JSON_FILE_NAME} File write failed", e);
         }
 
     }
 
     public static PluginList pluginList() {
         return HttpUtil.createGet(PLUGIN_LIST_URL)
-                .thenFunction(response -> {
-                    try (InputStream is = response.bodyStream()) {
-                        if (!response.isOk()) {
-                            throw new IllegalArgumentException(CharSequenceUtil.format("{} The request failed = {}", PLUGIN_LIST_URL, response));
-                        }
-                        return IoUtil.readObj(is, PluginList.class);
-                    } catch (IOException e) {
-                        throw new IllegalArgumentException(CharSequenceUtil.format("{} The request io read failed", PLUGIN_LIST_URL), e);
-                    }
-                });
+                       .thenFunction(response -> {
+                           try (InputStream is = response.bodyStream()) {
+                               if (!response.isOk()) {
+                                   throw new IllegalArgumentException(
+                                           STR."\{PLUGIN_LIST_URL} The request failed = \{response}");
+                               }
+                               return IoUtil.readObj(is, PluginList.class);
+                           } catch (IOException e) {
+                               throw new IllegalArgumentException(
+                                       STR."\{PLUGIN_LIST_URL} The request io read failed", e);
+                           }
+                       });
     }
 
     public static List<PluginList.Plugin> pluginListFilter(PluginList pluginList) {
         return pluginList.getPlugins()
-                .stream()
-                .filter(plugin -> !PluginsContextHolder.pluginCacheList.contains(new PluginCache().setId(plugin.getId())))
-                .filter(plugin -> !CharSequenceUtil.equals(plugin.getPricingModel(), "FREE"))
-                .toList();
+                         .stream()
+                         .filter(plugin -> !PluginsContextHolder.pluginCacheList.contains(
+                                 new PluginCache().setId(plugin.getId())))
+                         .filter(plugin -> !CharSequenceUtil.equals(plugin.getPricingModel(), "FREE"))
+                         .toList();
     }
 
     public static List<PluginCache> pluginConversion(List<PluginList.Plugin> pluginList) {
@@ -122,16 +125,18 @@ public class PluginsContextHolder {
 
     public static PluginInfo pluginInfo(Long pluginId) {
         return HttpUtil.createGet(PLUGIN_INFO_URL + pluginId)
-                .thenFunction(response -> {
-                    try (InputStream is = response.bodyStream()) {
-                        if (!response.isOk()) {
-                            throw new IllegalArgumentException(CharSequenceUtil.format("{} The request failed = {}", PLUGIN_INFO_URL, response));
-                        }
-                        return IoUtil.readObj(is, PluginInfo.class);
-                    } catch (IOException e) {
-                        throw new IllegalArgumentException(CharSequenceUtil.format("{} The request io read failed", PLUGIN_LIST_URL), e);
-                    }
-                });
+                       .thenFunction(response -> {
+                           try (InputStream is = response.bodyStream()) {
+                               if (!response.isOk()) {
+                                   throw new IllegalArgumentException(
+                                           STR."\{PLUGIN_INFO_URL} The request failed = \{response}");
+                               }
+                               return IoUtil.readObj(is, PluginInfo.class);
+                           } catch (IOException e) {
+                               throw new IllegalArgumentException(
+                                       STR."\{PLUGIN_LIST_URL} The request io read failed", e);
+                           }
+                       });
     }
 
 

@@ -30,7 +30,7 @@ public class ProductsContextHolder {
         try {
             productJsonArray = IoUtil.readUtf8(FileUtil.getInputStream(productJsonFile));
         } catch (IORuntimeException e) {
-            throw new IllegalArgumentException(CharSequenceUtil.format("{} File read failed !", PRODUCT_JSON_FILE_NAME), e);
+            throw new IllegalArgumentException(STR."\{PRODUCT_JSON_FILE_NAME} File read failed !", e);
         }
         if (CharSequenceUtil.isBlank(productJsonArray) || !JSONUtil.isTypeJSON(productJsonArray)) {
             log.error("Jetbrains Product data does not exist !");

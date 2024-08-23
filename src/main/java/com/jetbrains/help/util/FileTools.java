@@ -1,14 +1,11 @@
 package com.jetbrains.help.util;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
-import java.io.IOException;
 
 public interface FileTools {
 
@@ -35,7 +32,7 @@ public interface FileTools {
                 try {
                     FileUtil.writeFromStream(classPathResource.getInputStream(), classPathFile);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException(CharSequenceUtil.format("{} File read failed", classPathFile.getPath()), e);
+                    throw new IllegalArgumentException(STR."\{classPathFile.getPath()} File read failed", e);
                 }
                 FileUtil.copy(classPathFile, file, true);
             }
