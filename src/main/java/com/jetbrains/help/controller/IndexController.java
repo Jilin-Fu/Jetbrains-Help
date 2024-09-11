@@ -85,7 +85,7 @@ public class IndexController {
         if (licenseeName == null || licenseeName.isEmpty() ||
                 assigneeName == null || assigneeName.isEmpty() ||
                 expiryDate == null || !Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$").matcher(expiryDate).matches()) {
-            return STR."参数异常[licenseeName=\{licenseeName},assigneeName=\{assigneeName},expiryDate=\{expiryDate},]";
+            return STR."参数异常[licenseeName=\{licenseeName},assigneeName=\{assigneeName},expiryDate=\{expiryDate}]";
         }
 
         jetbrainsHelpProperties.setDefaultLicenseName(body.getLicenseeName());

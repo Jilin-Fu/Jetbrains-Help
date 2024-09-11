@@ -20,7 +20,7 @@ $(document).ready(function() {
                 localStorage.setItem('licenseInfo', licenseInfoStr);
                 window.location.reload()
             } else {
-                alert(response);
+                customAlert(response);
             }
         });
     };
@@ -47,9 +47,9 @@ $(document).ready(function() {
         "--add-opens=java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED\n" +
         "--add-opens=java.base/jdk.internal.org.objectweb.asm.tree=ALL-UNNAMED";
         navigator.clipboard.writeText(text).then(function() {
-            alert("已复制：\n" + text);
+            customAlert("已复制：\n" + text);
         }).catch(function(error) {
-            alert("复制失败: " + error);
+            customAlert("复制失败: " + error);
         });
     };
 
@@ -71,7 +71,7 @@ $(document).ready(function() {
             .then(response => {
                 copyText(response)
                     .then((result) => {
-                        alert(result);
+                        customAlert(result);
                     });
             });
     };
@@ -88,3 +88,25 @@ $(document).ready(function() {
     };
 
 });
+
+// 自定义 alert 函数
+function customAlert(message) {
+    // 替换换行符为 <br>
+    let formattedMessage = message.replace(/\n/g, '<br>');
+
+    // 设置消息内容
+    $('#alert-message').html(formattedMessage);
+
+    // 显示弹框
+    $('#custom-alert').fadeIn();
+
+    // 点击OK按钮关闭弹框
+    $('#alert-ok').on('click', function () {
+        $('#custom-alert').fadeOut();
+    });
+}
+
+function closeForm() {
+    $('#mask, #form').hide();
+}
+
