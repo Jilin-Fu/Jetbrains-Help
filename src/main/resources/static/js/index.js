@@ -13,8 +13,16 @@ $(document).ready(function() {
             assigneeName: $('#assigneeName').val(),
             expiryDate: $('#expiryDate').val()
         };
-        localStorage.setItem('licenseInfo', JSON.stringify(licenseInfo));
-        $('#mask, #form').hide();
+        let licenseInfoStr = JSON.stringify(licenseInfo);
+        $.post('/updateLicenseInfo', licenseInfoStr).then(response => {
+            $('#mask, #form').hide();
+            if (response == null || response === '') {
+                localStorage.setItem('licenseInfo', licenseInfoStr);
+                window.location.reload()
+            } else {
+                alert(response);
+            }
+        });
     };
 
     // Function to handle search input
@@ -25,9 +33,11 @@ $(document).ready(function() {
     // Function to show license form
     window.showLicenseForm = function () {
         let licenseInfo = JSON.parse(localStorage.getItem('licenseInfo'));
-        $('#licenseeName').val(licenseInfo?.licenseeName || '光云');
-        $('#assigneeName').val(licenseInfo?.assigneeName || '藏柏');
-        $('#expiryDate').val(licenseInfo?.expiryDate || '2111-11-11');
+        if (licenseInfo != null) {
+            $('#licenseeName').val(licenseInfo?.licenseeName || 'default');
+            $('#assigneeName').val(licenseInfo?.assigneeName || 'default');
+            $('#expiryDate').val(licenseInfo?.expiryDate || '2026-08-16');
+        }
         $('#mask, #form').show();
     };
 
@@ -52,7 +62,7 @@ $(document).ready(function() {
         let licenseInfo = JSON.parse(localStorage.getItem('licenseInfo'));
         let productCode = $(e).closest('.card').data('productCodes');
         let data = {
-            "licenseName": licenseInfo.licenseeName,
+            "licenseeName": licenseInfo.licenseeName,
             "assigneeName": licenseInfo.assigneeName,
             "expiryDate": licenseInfo.expiryDate,
             "productCode": productCode,

@@ -1,28 +1,23 @@
-package com.jetbrains.help.route;
+package com.jetbrains.help.controller;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.StrUtil;
-import com.jetbrains.help.JetbrainsHelpApplication;
 import com.jetbrains.help.context.AgentContextHolder;
 import com.jetbrains.help.context.PluginsContextHolder;
 import com.jetbrains.help.context.ProductsContextHolder;
 import com.jetbrains.help.properties.JetbrainsHelpProperties;
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
@@ -30,8 +25,17 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 @Controller
 @RequiredArgsConstructor
 public class IndexController {
-
     private final JetbrainsHelpProperties jetbrainsHelpProperties;
+
+    @Data
+    public static class UpdateLicenseInfoReqBody {
+
+        private String licenseeName;
+
+        private String assigneeName;
+
+        private String expiryDate;
+    }
 
     @GetMapping
     public String index(Model model) {
@@ -69,5 +73,24 @@ public class IndexController {
                 .header(CONTENT_DISPOSITION, "attachment;filename=" + jaNetfilterZipFile.getName())
                 .contentType(APPLICATION_OCTET_STREAM)
                 .body(new InputStreamResource(FileUtil.getInputStream(jaNetfilterZipFile)));
+    }
+
+    @PostMapping("updateLicenseInfo")
+    @ResponseBody
+    public String generateLicense(@RequestBody UpdateLicenseInfoReqBody body) {
+        String licenseeName = body.getLicenseeName();
+        String assigneeName = body.getAssigneeName();
+        String expiryDate = body.getExpiryDate();
+
+        if (licenseeName == null || licenseeName.isEmpty() ||
+                assigneeName == null || assigneeName.isEmpty() ||
+                expiryDate == null || !Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$").matcher(expiryDate).matches()) {
+            return STR."参数异常[licenseeName=\{licenseeName},assigneeName=\{assigneeName},expiryDate=\{expiryDate},]";
+        }
+
+        jetbrainsHelpProperties.setDefaultLicenseName(body.getLicenseeName());
+        jetbrainsHelpProperties.setDefaultAssigneeName(body.getAssigneeName());
+        jetbrainsHelpProperties.setDefaultExpiryDate(body.getExpiryDate());
+        return "";
     }
 }

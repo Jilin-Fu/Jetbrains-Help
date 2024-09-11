@@ -6,23 +6,26 @@ import cn.hutool.core.util.StrUtil;
 import com.jetbrains.help.context.LicenseContextHolder;
 import com.jetbrains.help.context.PluginsContextHolder;
 import com.jetbrains.help.context.ProductsContextHolder;
+import com.jetbrains.help.properties.JetbrainsHelpProperties;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @RestController
+@RequiredArgsConstructor
 public class OpenApiController {
+    private final JetbrainsHelpProperties jetbrainsHelpProperties;
 
     @Data
     public static class GenerateLicenseReqBody {
 
-        private String licenseName;
+        private String licenseeName;
 
         private String assigneeName;
 
@@ -53,7 +56,7 @@ public class OpenApiController {
             productCodeSet = CollUtil.newHashSet(CharSequenceUtil.splitTrim(body.getProductCode(), ','));
         }
         return LicenseContextHolder.generateLicense(
-                body.getLicenseName(),
+                body.getLicenseeName(),
                 body.getAssigneeName(),
                 body.getExpiryDate(),
                 productCodeSet

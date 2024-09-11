@@ -103,4 +103,12 @@
 </body>
 <script type="text/javascript" src="/js/jquery.js"></script>
 <script type="text/javascript" src="/js/index.js"></script>
+<script>
+    let licenseInfo = {
+        licenseeName: $('#licenseeName').val(),
+        assigneeName: $('#assigneeName').val(),
+        expiryDate: $('#expiryDate').val()
+    };
+    localStorage.setItem('licenseInfo', JSON.stringify(licenseInfo));
+</script>
 </html>
